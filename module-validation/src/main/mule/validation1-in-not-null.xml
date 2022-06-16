@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="validation1Flow" doc:id="38e1a49e-58db-4570-a2db-816e4a3dabc1" >
+		<http:listener doc:name="Listener" doc:id="b127f231-201f-46f5-967f-b72d8666c321" config-ref="HTTP_Listener_config" path="/validate1">
+			<http:error-response statusCode="#[vars.httpStatus]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<validation:is-not-null doc:name="Is not null" doc:id="b6f5e165-cd92-4a9c-838c-70e59fe929ab" config-ref="Validation_Config" value="#[payload.address]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="cc1f09ed-e894-453a-99fd-94070cdab908" message="#['Complete']"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="cf0fabaf-d91b-43cb-82ea-8285605a6c83" type="VALIDATION:NULL">
+				<ee:transform doc:name="Transform Message" doc:id="bdd33a72-fe8c-44f4-afe0-6e6685dcde7a" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{ 
+	"error": error.description,
+	"type": error.errorType
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

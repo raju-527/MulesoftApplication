@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	<flow name="sizeFlow" doc:id="e5c25a82-7fd2-45ad-abdc-a9e798ae3b29" >
+		<http:listener doc:name="Listener" doc:id="784fad62-ee6f-491a-9561-9ec94964df03" config-ref="HTTP_Listener_config" path="/size">
+			<http:error-response statusCode="#[vars.httpStatus]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<validation:validate-size doc:name="Validate size" doc:id="6ca5ea84-d6ac-4b95-be1f-14ed75bebd44" value="#[payload.id]" min="1" max="2"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c3fe1c6a-062c-4481-98a3-26929d53c348" message="#['Successfully Completed']"/>
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="81761a5c-d8d1-4b84-9ae5-37b5982e1709" type="VALIDATION:INVALID_SIZE">
+				<ee:transform doc:name="Transform Message" doc:id="1683831a-d84c-4500-ad97-ae55fc4b6342" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"error": error.description,
+	"type": error.errorType
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7d310096-ff60-4d69-b162-808b9c4fc18a" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="272b23b5-4461-4606-8ded-f9820da0919e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"error": error.description,
+	"type": error.errorType
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+
+		</error-handler>
+	
+</flow>
+	
+	
+	</mule>

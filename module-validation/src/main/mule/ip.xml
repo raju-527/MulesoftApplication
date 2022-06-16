@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">  
+	<flow name="ipFlow" doc:id="851f3977-725f-4eb5-bbd3-9ce2dbc422e2" >
+		<http:listener doc:name="Listener" doc:id="732b881a-82f5-452f-9519-11038c12e219" config-ref="HTTP_Listener_config" path="/ip">
+			<http:error-response statusCode="#[vars.httpStatus]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<validation:is-ip doc:name="Is IP" doc:id="78415650-91a8-4e64-9ddf-9c56341512b2" config-ref="Validation_Config" ip="#[attributes.headers['X-IP-ADDRESS']]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f9a7c920-668b-483c-b2f8-3f272fcf6df7" message="#['Successfully Completed']"/>
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="05f43138-a428-449d-8231-1550d4b4867b" type="VALIDATION:INVALID_IP">
+				<ee:transform doc:name="Transform Message" doc:id="9f23b3d5-bdef-49a2-aad3-a65c564b2ec8" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"error": error.description,
+	"type": error.errorType
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fa1cddf0-1127-42a4-93a1-4870321d8bc5" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="1fc37939-2662-4b03-87b5-c2d11eb96955" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"error": error.description,
+	"type": error.errorType
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+
+		</error-handler>
+	
+</flow>
+	
+	
+	</mule>
