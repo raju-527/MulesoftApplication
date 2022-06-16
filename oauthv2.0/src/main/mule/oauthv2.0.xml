@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="85f7fb9c-1347-41fc-b82c-7d5531b055e9" basePath="/api" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="04aab6b8-4e10-4d4f-9917-9535efba084a" >
+		<salesforce:config-with-oauth-connection >
+			<salesforce:oauth-authorization-code consumerKey="3MVG9wt4IL4O5wvLTlsh4KkgD98GrNdPHwbWCYq5uSXxO9u0qaj8DZB8Ho8627ifgRIrN4UFBpVkb2ymiOPMQ" consumerSecret="65101E0883DC123C1E0B9C3457007A594F508CC9B514CEE2A5AE35079A0C4FE2" scopes="api" />
+			<salesforce:oauth-callback-config listenerConfig="HTTP_Listener_config" callbackPath="/callback" authorizePath="/auth" externalCallbackUrl="http://localhost:8081/api/callback" />
+		</salesforce:config-with-oauth-connection>
+	</salesforce:sfdc-config>
+	<flow name="oauthv2.0Flow" doc:id="2d77c985-63d0-4a55-abd1-14c80422489a" >
+		<http:listener doc:name="Listener" doc:id="9ee10a7a-7b7f-491b-b988-399c048b0b9c" config-ref="HTTP_Listener_config" path="/oauth2.0"/>
+		<salesforce:query doc:name="Query" doc:id="5a64958b-ca4d-4fcf-b599-9ae4261a76bd" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account limit 5]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="86698278-bce0-4243-8710-e3ec0c9491d8" />
+	</flow>
+</mule>
