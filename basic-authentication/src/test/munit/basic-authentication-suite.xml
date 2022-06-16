@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="basic-authentication-suite.xml" />
+	<munit:test name="basic-authenticationFlow-test" doc:id="5b1325ce-134f-4bed-8ee9-3b84f1b7f3d2" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Query" doc:id="47628e5c-680f-4411-9534-a81b5c35206a" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0614d188-71c2-4d20-b905-3078bcf86109" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java --- readUrl('classpath://basicauthenticationFlowtest\mock_payload.dwl')]" mediaType="application/java" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="36016617-d7df-4894-83bd-2fb1404ecf39" >
+				<munit:payload value="#[readUrl('classpath://basicauthenticationFlowtest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://basicauthenticationFlowtest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to basic-authenticationFlow" doc:id="38552636-0eb6-45da-aa15-d836d7738f66" name="basic-authenticationFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="85cfb7e2-baf5-4ff5-b76c-149afdc222d4" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import basicauthenticationFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
