@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="46744a24-a8d7-4b09-86bd-91992da0d973" basePath="/api" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="21534268-27d2-47cf-a57e-b6615d36b652" >
+		<salesforce:saml-connection consumerKey="3MVG9wt4IL4O5wvLTlsh4KkgD98GrNdPHwbWCYq5uSXxO9u0qaj8DZB8Ho8627ifgRIrN4UFBpVkb2ymiOPMQ" keyStore="C:\Users\DonthiRaju\Downloads\00D5i000001vnyH.jks" storePassword="LaxmiBabu@527" principal="donthi.raju@girikon.com" />
+	</salesforce:sfdc-config>
+	<flow name="oauth-samlFlow" doc:id="ace73c3b-adb7-484a-9727-851834c7f1ac" >
+		<http:listener doc:name="Listener" doc:id="4cde797d-5829-4b9e-b5d1-9e868e1221b1" config-ref="HTTP_Listener_config" path="/oauthsaml"/>
+		<salesforce:query doc:name="Query" doc:id="c33a1404-e4a2-415e-8579-72308e85803c" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="80273c92-464b-471f-98a4-59d5821e2dac" />
+	</flow>
+</mule>
