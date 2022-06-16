@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ddc3e4c8-125a-4a98-9bae-bf099d1bf0e6" basePath="/api" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="coment-out-stepsFlow" doc:id="4621bcd8-e2e5-4225-af7b-297257a9e33c" >
+		<http:listener doc:name="Listener" doc:id="fdd57fb5-2db8-480d-9450-554d2e829aa5" config-ref="HTTP_Listener_config" path="/comment"/>
+		
+		<!-- This is commented in  mule application for hidding purpose  -->
+		  
+		<logger level="INFO" doc:name="Logger" doc:id="54d343b9-a873-470c-8673-94dda031250a" message="logger1"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ee955a43-a24d-4596-a548-34586e81639c" message="logger2"/>	    
+		<logger level="INFO" doc:name="Logger" doc:id="f1b8b1a4-b440-41fc-88bf-a46444737df6" message="logger3"/>
+		<logger level="INFO" doc:name="Logger" doc:id="43135c88-fb43-48b9-9aeb-88b3a819baa2" message="logger4"/>
+	</flow>
+</mule>
