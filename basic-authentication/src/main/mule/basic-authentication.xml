@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	<flow name="basic-authenticationFlow" doc:id="e1a40ad7-295e-4ec6-bcf9-074b3c5454d2" >
 		<http:listener doc:name="Listener" doc:id="0c0d96c6-86b2-471c-96ad-ed83a7d39bfa" config-ref="HTTP_Listener_config" path="/connection"/>
 		<salesforce:query doc:name="Query" doc:id="0614d188-71c2-4d20-b905-3078bcf86109" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account]]></salesforce:salesforce-query>
+			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account limit 5]]></salesforce:salesforce-query>
 		</salesforce:query>
 		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="8eca2785-e9ed-4d85-bee2-a4aa5fa5691f" />
 	</flow>
