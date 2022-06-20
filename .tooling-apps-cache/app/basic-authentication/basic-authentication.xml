@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="3a215281-f788-4eec-8779-b2a71479c1a6" >
+		<salesforce:basic-connection username="donthi.raju@girikon.com" password="LaxmiBabu@527" securityToken="KoBYYwiN0HPzIB9MqIBw7qUx" />
+	</salesforce:sfdc-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="654f5237-4361-4efc-b411-5da5c122fb5e" basePath="/api" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="basic-authenticationFlow" doc:id="e1a40ad7-295e-4ec6-bcf9-074b3c5454d2" >
+		<http:listener doc:name="Listener" doc:id="0c0d96c6-86b2-471c-96ad-ed83a7d39bfa" config-ref="HTTP_Listener_config" path="/connection"/>
+		<salesforce:query doc:name="Query" doc:id="0614d188-71c2-4d20-b905-3078bcf86109" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account limit 5]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="8eca2785-e9ed-4d85-bee2-a4aa5fa5691f" />
+	</flow>
+</mule>

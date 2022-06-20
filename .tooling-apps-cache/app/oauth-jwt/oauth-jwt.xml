@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="8837462d-1f4c-4597-b387-2a17590800fc" basePath="/api" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="6723dda5-6b9f-4627-b8d7-376e56760245" >
+		<salesforce:jwt-connection consumerKey="3MVG9wt4IL4O5wvLTlsh4KkgD98GrNdPHwbWCYq5uSXxO9u0qaj8DZB8Ho8627ifgRIrN4UFBpVkb2ymiOPMQ" keyStore="C:\Users\DonthiRaju\Downloads\00D5i000001vnyH.jks" storePassword="LaxmiBabu@527" certificateAlias="querycert" principal="donthi.raju@girikon.com"/>
+	</salesforce:sfdc-config>
+	<flow name="oauth-jwtFlow" doc:id="74e49987-6d25-40de-8c20-065e7131ac67" >
+		<http:listener doc:name="Listener" doc:id="c4a99832-9a85-4324-80a8-46dfdf3cd687" config-ref="HTTP_Listener_config" path="/oauthjwt"/>
+		<salesforce:query doc:name="Query" doc:id="caea2bc8-3c12-446e-92ad-5bb33d10e4d1" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account limit
+]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="373e88bc-a154-4e1f-9e88-5f26cfb4931c" />
+	</flow>
+</mule>
