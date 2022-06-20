@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	<flow name="oauth-jwtFlow" doc:id="74e49987-6d25-40de-8c20-065e7131ac67" >
 		<http:listener doc:name="Listener" doc:id="c4a99832-9a85-4324-80a8-46dfdf3cd687" config-ref="HTTP_Listener_config" path="/oauthjwt"/>
 		<salesforce:query doc:name="Query" doc:id="caea2bc8-3c12-446e-92ad-5bb33d10e4d1" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account
+			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account limit
 ]]></salesforce:salesforce-query>
 		</salesforce:query>
 		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="373e88bc-a154-4e1f-9e88-5f26cfb4931c" />
