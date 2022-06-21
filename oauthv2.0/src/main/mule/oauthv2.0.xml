@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mu
 	<flow name="oauthv2.0Flow" doc:id="2d77c985-63d0-4a55-abd1-14c80422489a" >
 		<http:listener doc:name="Listener" doc:id="9ee10a7a-7b7f-491b-b988-399c048b0b9c" config-ref="HTTP_Listener_config" path="/oauth2.0"/>
 		<salesforce:query doc:name="Query" doc:id="5a64958b-ca4d-4fcf-b599-9ae4261a76bd" config-ref="Salesforce_Config">
-			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account limit 5]]></salesforce:salesforce-query>
+			<salesforce:salesforce-query ><![CDATA[select Name, AccountNumber from Account ]]></salesforce:salesforce-query>
 		</salesforce:query>
 		<set-payload value="#[%dw 2.0&#10;output application/json&#10;---&#10;payload]" doc:name="Set Payload" doc:id="86698278-bce0-4243-8710-e3ec0c9491d8" />
 	</flow>
