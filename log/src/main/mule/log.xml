@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9423ce00-7d5c-4f7d-ab2f-fd13bfa4a658" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="logFlow" doc:id="18ad68e0-895d-45a3-a3ff-20018f1ea31a" >
+		<http:listener doc:name="Listener" doc:id="c52c9b7f-8b68-4dbb-9c59-ff7c404b2344" config-ref="HTTP_Listener_config" path="/log"/>
+		<ee:transform doc:name="Transform Message" doc:id="e9ab6c06-e194-445c-a595-5fc385ccc87c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var myMule = {mule: {dataweave: {session: "6"}}}
+---
+{
+    "a": log("Dataweave", "Phonix, Virus is spreading rapidly in City"),
+    "b": log("Info", myMule.mule).dataweave.session
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c6d5d7e9-79b1-488f-97c9-1968e19d7b19" message="#[payload]"/>
+	</flow>
+</mule>
